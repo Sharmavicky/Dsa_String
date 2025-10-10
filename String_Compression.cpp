@@ -5,19 +5,32 @@
 using namespace std;
 
 /*
-    * Problem: Given a character array chars, compress it using the following algorithm:
-
-    * - Begin with an empty string s. For each group of consecutive repeating characters in chars:
-    *   - If the group's length is 1, append the character to s.
-    *   - If the group's length is greater than 1, append the character followed by the group's length to s.
-
-    * - The compressed string should replace the original characters in chars.
-    * - Return the new length of chars after compression.
-    
-    * Time Complexity: O(n), where n is the length of the input vector chars.
-    * Space Complexity: O(n), for storing the compressed string.
-
+    * Class Name: Solution
+    *
+    * Description:
+    * This class implements two methods to solve the "String Compression" problem (LeetCode #443).
+    * Given an array of characters, both methods compress it in-place such that
+    * consecutive duplicate characters are replaced by a single instance followed by the count.
+    *
+    * Example:
+    * Input:  ['a','a','b','b','c','c','c']
+    * Output: ['a','2','b','2','c','3'], returns 6
+    *
+    * Methods:
+    * 1. BruteForce(vector<char>& chars):
+    *    - Builds a new compressed string using extra space.
+    *    - Simpler but not optimal (uses O(n) extra space).
+    *
+    * 2. OptimalApproach(vector<char>& chars):
+    *    - Performs compression in-place using two pointers.
+    *    - Achieves O(n) time and O(1) extra space.
+    *
+    * Time Complexity: O(n)
+    * Space Complexity:
+    *   - BruteForce: O(n)
+    *   - OptimalApproach: O(1)
 */
+
 class Solution {
     public:
     int BruteForce(vector<char>& chars) {
@@ -58,4 +71,44 @@ class Solution {
         // return the new length of the compressed chars
         return chars.size();
     }
+
+    int OptimalApproach(vector<char>& chars) {
+        int n = chars.size();
+        int idx = 0; // keeps track where to put next character
+
+        for (int i=0; i<n; ) {
+            int count = 0;
+            char ch = chars[i];
+
+            // count character
+            while (i < n && chars[i] == ch) {
+                count++;
+                i++;
+            }
+
+            // add chracter
+            chars[idx++] = ch;
+
+            // if count is greater than 1
+            if (count > 1) {
+                string cnt = to_string(count);
+
+                for (char s: cnt) {
+                    chars[idx++] = s;
+                }
+            }
+        }
+
+        return idx;
+    }
 };
+
+// main function
+int main() {
+    Solution sol;
+    vector<char> ch = {'a', 'a', 'b', 'b', 'b', 'c', 'c', 'c'};
+    int res = sol.OptimalApproach(ch);
+    cout << res;
+    
+    return 0;
+}
