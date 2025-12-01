@@ -3,25 +3,27 @@ using namespace std;
 
 /*
     * @class Solution
-    * @brief Provides methods to find the length of the longest palindromic substring in a given string.
+    * @brief Finds the longest palindromic substring in a given string using two approaches.
     *
-    * The class implements two approaches:
+    * The class implements:
     *
     * 1. **BruteForce() – O(n³)**
     *      - Iterates over all possible substrings of the input string.
     *      - Uses the helper function `isPalindrome()` to check if a substring is a palindrome.
-    *      - Updates the maximum length whenever a longer palindrome is found.
+    *      - Keeps track of the starting index and length of the longest palindrome found.
+    *      - Returns the substring itself.
     *
     * 2. **ExpandAroundCenter() – O(n²)**
     *      - Treats each character (and each pair of consecutive characters) as potential centers of a palindrome.
     *      - Expands outward while the characters on both sides match.
-    *      - Efficiently finds the longest palindrome without checking all substrings explicitly.
+    *      - Updates the start index and length of the longest palindrome dynamically.
+    *      - Returns the longest palindromic substring.
     *
     * **Helper Function:**
     * - `isPalindrome(s, left, right)` checks if the substring from index `left` to `right` is a palindrome in O(n) time.
     *
     * These approaches illustrate the transition from a naive cubic solution to a more optimal quadratic solution
-    * and are widely used in string processing, dynamic programming, and competitive programming problems.
+    * and are commonly used in string processing, dynamic programming, and competitive programming.
 */
 
 class Solution {
@@ -38,28 +40,34 @@ class Solution {
     }
 
 public:
-    int BruteForce(string s) {
-        int n = s.length(), maxLength = 0;
+    string BruteForce(string s) {
+        int n = s.length(), maxLength = 0, startIdx = 0;
 
         for (int i=0; i<n; i++) {
             for (int j=i; j<n; j++) {
                 if (isPalindrome(s, i, j)) {
                     maxLength = max(maxLength, j - i + 1);
+                    startIdx = i;
                 }
             }
         }
 
-        return maxLength;
+        return s.substr(startIdx, maxLength);
     }
 
-    int ExpandAroundCenter(string s) {
+    string ExpandAroundCenter(string s) {
         int n = s.length(), maxLength = 0;
+        int start = 0, end = 0;
 
         for (int center = 0; center < n; center++) {
             // Odd length palindromes
             int left = center, right = center;
             while (left >= 0 && right < n && s[left] == s[right]) {
-                maxLength = max(maxLength, right - left + 1);
+                if (right - left + 1 > maxLength) {
+                    maxLength = right - left + 1;
+                    start = left;
+                    end = right;
+                }
                 left--;
                 right++;
             }
@@ -67,12 +75,16 @@ public:
             // Even length palindromes
             left = center, right = center + 1;
             while (left >= 0 && right < n && s[left] == s[right]) {
-                maxLength = max(maxLength, right - left + 1);
+                if (right - left + 1 > maxLength) {
+                    maxLength = right - left + 1;
+                    start = left;
+                    end = right;
+                }
                 left--;
                 right++;
             }
         }
-        return maxLength;
+        return s.substr(start, maxLength);
     }
 };
 
