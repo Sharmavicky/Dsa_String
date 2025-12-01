@@ -4,30 +4,30 @@ using namespace std;
 
 /*
     * @class Solution
-    * @brief Provides a method to validate if a given string of parentheses is balanced.
+    * @brief Implements two approaches to validate whether a string of brackets is balanced.
     *
-    * This class implements the classic "Valid Parentheses" problem using a stack-based approach.
-    * The algorithm ensures that every opening bracket ('(', '{', '[') has a corresponding
-    * closing bracket (')', '}', ']') and that the order of brackets is correctly nested.
+    * The class provides two methods:
     *
-    * Approach:
-    * - Traverse the input string character by character.
-    * - Push all opening brackets onto a stack.
-    * - For every closing bracket, check if it correctly matches the top of the stack.
-    * - If at any point there’s a mismatch or an extra closing bracket, return false.
-    * - Finally, the string is valid if the stack is empty.
+    * 1. **BruteForce()**
+    *      - Uses a straightforward stack-based check for valid parentheses.
+    *      - For every closing bracket, it verifies that the top of the stack contains
+    *        the correct corresponding opening bracket.
+    *      - Returns false immediately on mismatch or if the stack is empty when
+    *        encountering a closing bracket.
     *
-    * Time Complexity: O(N)
-    * Space Complexity: O(N)
+    * 2. **Optimal()**
+    *      - A clean and structured version of the same stack-based logic.
+    *      - Pops the top element for each closing bracket and checks bracket compatibility
+    *        using clear conditional comparisons.
+    *      - Ensures all brackets are matched by verifying the stack is empty at the end.
     *
-    * Example:
-    * Input: "{[()]}"
-    * Output: true
+    * Both methods run in **O(n)** time and **O(n)** space, making them suitable for
+    * syntax checking, expression parsing, and balanced bracket validation problems.
 */
 
 class Solution {
 public:
-    bool isValid(string s) {
+    bool BruteForce(string s) {
         stack<char> stk;
 
         for (char c : s) {
@@ -45,5 +45,34 @@ public:
         }
 
         return stk.size() == 0;
+    }
+
+    bool Optimal(string s) {
+        stack<char> stk;
+
+        for (char c : s) {
+            // If it's an opening bracket, push
+            if (c == '(' || c == '{' || c == '[') {
+                stk.push(c);
+            }
+            else{
+                // If closing bracket but stack empty → invalid
+                if (stk.empty()) return false;
+
+                char top = stk.top();
+                stk.pop();
+
+                // Check if the brackets match
+                if ((top == '(' && c != ')') ||
+                    (top == '{' && c != '}') ||
+                    (top == '[' && c != ']'))
+                {
+                    return false;
+                }
+            }
+        }
+
+        // If stack empty, all brackets correctly matched
+        return stk.empty();
     }
 };
